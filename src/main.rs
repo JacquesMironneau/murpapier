@@ -47,7 +47,12 @@ fn main() {
         vec = get_files(Path::new("wallpapers")).expect("files not found");
         wallpapers_time_set(&mut vec);
     } else {
-        vec = get_wallpaper_from_config().unwrap();
+    let key = "CONFIG_MURPAPIER";
+        match get_wallpaper_from_config()
+        {
+            Ok(v) => vec = v,
+            Err(e) => panic!("{} {}",e, env::var(key).unwrap())
+        }
         vec.sort_by(|a, b| (a.hour * 60 + a.min).cmp(&(b.hour * 60 + b.min)));
     }
     if verbose_mode {
@@ -127,8 +132,11 @@ fn get_wallpaper_from_config() -> Result<Vec<Wallpaper>, io::Error> {
     if let Ok(dir) = env::current_dir() {
         path.push(dir);
     }
-    let config_path: &str = "config.toml";
-    let config: String = fs::read_to_string(Path::new(config_path))?;
+    let key = "CONFIG_MURPAPIER";
+
+    let config_path = env::var(key).expect("CONFIG_MURPAPIER env variable must be set to the config.toml file path");
+    println!("{}", config_path);
+    let config: String = fs::read_to_string(Path::new(&config_path))?;
 
     let items_table: HashMap<String, Vec<Wallpaper>> =
         from_str(&config).expect("Can't file config.toml");

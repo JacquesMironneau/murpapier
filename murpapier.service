@@ -1,0 +1,10 @@
+[Unit]
+Description=Application qui change ton murpapier
+
+[Service]
+Environment="XDG_CURRENT_DESKTOP=GNOME"
+Environment="CONFIG_MURPAPIER=%h/.config/murpapier/config.toml"
+ExecStart=/bin/murpapier
+
+[Install]
+WantedBy=multi-user.target
