@@ -51,7 +51,7 @@ fn main() {
         match get_wallpaper_from_config()
         {
             Ok(v) => vec = v,
-            Err(e) => panic!("{} {}",e, env::var(key).unwrap())
+            Err(e) => panic!("{} {}",e, env::var(key).expect("CONFIG_MURPAPIER should be defined"))
         }
         vec.sort_by(|a, b| (a.hour * 60 + a.min).cmp(&(b.hour * 60 + b.min)));
     }
