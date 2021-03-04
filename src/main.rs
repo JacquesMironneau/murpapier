@@ -147,8 +147,8 @@ fn get_wallpaper_from_config() -> Result<Vec<Wallpaper>, io::Error> {
     let mut vec = items.to_vec();
 
     let dir_path = env::var(key_dir).expect("WALLPAPER_DIR env var must be set to the wallpapers folder");
+    println!("{}", dir_path);
     let wall_path = Path::new(&dir_path);
-    println!("{}", wall_path);
     for k in &mut vec {
         if let Some(p) = wall_path.to_str() {
             k.path = p.to_owned() + "/" + &k.path;
