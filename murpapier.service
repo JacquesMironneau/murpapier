@@ -4,6 +4,7 @@ Description=Application qui change ton murpapier
 [Service]
 Environment="XDG_CURRENT_DESKTOP=GNOME"
 Environment="CONFIG_MURPAPIER=%h/.config/murpapier/config.toml"
+Environment="WALLPAPER_DIR=%h/.config/murpapier/wallpapers"
 ExecStart=/bin/murpapier
 
 [Install]

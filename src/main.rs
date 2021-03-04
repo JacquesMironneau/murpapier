@@ -129,6 +129,8 @@ fn to_hour_minutes(index: i32, lenght: i32) -> (i32, i32) {
 
 fn get_wallpaper_from_config() -> Result<Vec<Wallpaper>, io::Error> {
     let mut path: PathBuf = PathBuf::new();
+    let key_dir ="WALLPAPER_DIR";
+
     if let Ok(dir) = env::current_dir() {
         path.push(dir);
     }
@@ -144,8 +146,11 @@ fn get_wallpaper_from_config() -> Result<Vec<Wallpaper>, io::Error> {
 
     let mut vec = items.to_vec();
 
+    let dir_path = env::var(key_dir).expect("WALLPAPER_DIR env var must be set to the wallpapers folder");
+    let wall_path = Path::new(&dir_path);
+    println!("{}", wall_path);
     for k in &mut vec {
-        if let Some(p) = path.to_str() {
+        if let Some(p) = wall_path.to_str() {
             k.path = p.to_owned() + "/" + &k.path;
         }
     }
