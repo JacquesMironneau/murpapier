@@ -33,6 +33,7 @@ path = "file-7.jpg"
 hour = 12
 min = 0
 
+
 [[image]]
 path = "file-8.jpg"
 hour = 14
@@ -45,15 +46,10 @@ min = 0
 
 [[image]]
 path = "file-10.jpg"
-hour = 18
+hour = 17
 min = 0
 
 [[image]]
 path = "file-11.jpg"
-hour = 20
-min = 0
-
-[[image]]
-path = "file-12.jpg"
-hour = 22
-min = 0
+hour = 17
+min = 8

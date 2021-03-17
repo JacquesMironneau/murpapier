@@ -101,16 +101,19 @@ fn main() {
         let local: DateTime<Local> = Local::now();
         let time_in_minutes = local.time().minute() + 60 * local.time().hour();
 
-        let sleep_time = time::Duration::from_secs(10);
+        let sleep_time = time::Duration::from_secs(300);
         thread::sleep(sleep_time);
 
+        // Handle the case where the last time is exceeded but it's not yet the first one
+        // e.g: last is 22:00 and it's currently 23:00 (in this case the next one will lower with a simple comparison)
+        // 22 * 60 > 8 * 60
         if index == 0 {
             if time_in_minutes > vec[vec.len() - 1].hour * 60 + vec[vec.len() - 1].min {
                 println!("Waiting for the morning (next is {})", vec[index].path);
                 continue;
             }
         }
-        // If the next one is exceeded
+        // If the next one is exceeded switch the wallpaper
         if time_in_minutes > (vec[index].hour * 60 + vec[index].min) {
             if let Err(val) = wallpaper::set_from_path(&vec[index].path) {
                 println!(
