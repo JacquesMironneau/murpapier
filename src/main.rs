@@ -47,11 +47,14 @@ fn main() {
         vec = get_files(Path::new("wallpapers")).expect("files not found");
         wallpapers_time_set(&mut vec);
     } else {
-    let key = "CONFIG_MURPAPIER";
-        match get_wallpaper_from_config()
-        {
+        let key = "CONFIG_MURPAPIER";
+        match get_wallpaper_from_config() {
             Ok(v) => vec = v,
-            Err(e) => panic!("{} {}",e, env::var(key).expect("CONFIG_MURPAPIER should be defined"))
+            Err(e) => panic!(
+                "{} {}",
+                e,
+                env::var(key).expect("CONFIG_MURPAPIER should be defined")
+            ),
         }
         vec.sort_by(|a, b| (a.hour * 60 + a.min).cmp(&(b.hour * 60 + b.min)));
     }
@@ -62,26 +65,67 @@ fn main() {
             println!("Wallpaper :{} scheduled at {}:{}", k.path, k.hour, k.min);
         }
     }
+    // Get the current
+    let local: DateTime<Local> = Local::now();
+    let time_in_minutes = local.time().minute() + 60 * local.time().hour();
 
+    let mut index = 0;
+
+    while time_in_minutes > (vec[index].hour * 60 + vec[index].min) {
+        index += 1;
+        if index == vec.len() {
+            break;
+        }
+    }
+
+    if index == 0 || index == vec.len() {
+        index = vec.len() - 1;
+    } else {
+        index -= 1;
+    }
+
+    if let Err(val) = wallpaper::set_from_path(&vec[index].path) {
+        println!(
+            "{} issue at {}:{} with {} file (first change)",
+            val, vec[index].hour, vec[index].min, vec[index].path
+        );
+    }
+    if verbose_mode {
+        println!("Changed to {}", vec[index].path);
+    }
+
+    index = (index + 1) % vec.len();
+
+    // Check if hour > next, if yes edit wp and edit next
     loop {
         let local: DateTime<Local> = Local::now();
+        let time_in_minutes = local.time().minute() + 60 * local.time().hour();
 
-        for wp in &vec {
-            if wp.hour == local.time().hour() && wp.min == local.time().minute() {
-                if let Err(val) = wallpaper::set_from_path(&wp.path) {
-                    println!(
-                        "{} issue at {}:{} with {} file",
-                        val, wp.hour, wp.min, wp.path
-                    );
-                }
-                if verbose_mode {
-                    println!("Changed to {}", wp.path);
-                }
-                break;
+        let sleep_time = time::Duration::from_secs(10);
+        thread::sleep(sleep_time);
+
+        if index == 0 {
+            if time_in_minutes > vec[vec.len() - 1].hour * 60 + vec[vec.len() - 1].min {
+                println!("Waiting for the morning (next is {})", vec[index].path);
+                continue;
             }
         }
-        let sleep_time = time::Duration::from_secs(60);
-        thread::sleep(sleep_time);
+        // If the next one is exceeded
+        if time_in_minutes > (vec[index].hour * 60 + vec[index].min) {
+            if let Err(val) = wallpaper::set_from_path(&vec[index].path) {
+                println!(
+                    "{} issue at {}:{} with {} file",
+                    val, vec[index].hour, vec[index].min, vec[index].path
+                );
+            }
+            if verbose_mode {
+                println!("Changed to {}", vec[index].path);
+            }
+            index = (index + 1) % vec.len();
+        } else {
+            println!("Nothing change, next one is: {}", vec[index].path);
+        }
+        
     }
 }
 
@@ -135,7 +179,8 @@ fn get_wallpaper_from_config() -> Result<Vec<Wallpaper>, io::Error> {
     }
     let key = "CONFIG_MURPAPIER";
 
-    let config_path = env::var(key).expect("CONFIG_MURPAPIER env variable must be set to the config.toml file path");
+    let config_path = env::var(key)
+        .expect("CONFIG_MURPAPIER env variable must be set to the config.toml file path");
     println!("{}", config_path);
     let config: String = fs::read_to_string(Path::new(&config_path))?;
 
@@ -145,8 +190,9 @@ fn get_wallpaper_from_config() -> Result<Vec<Wallpaper>, io::Error> {
 
     let mut vec = items.to_vec();
 
-    let key_dir ="WALLPAPER_DIR";
-    let dir_path = env::var(key_dir).expect("WALLPAPER_DIR env var must be set to the wallpapers folder");
+    let key_dir = "WALLPAPER_DIR";
+    let dir_path =
+        env::var(key_dir).expect("WALLPAPER_DIR env var must be set to the wallpapers folder");
     println!("{}", dir_path);
     let wall_path = Path::new(&dir_path);
     for k in &mut vec {
