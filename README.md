@@ -2,10 +2,18 @@
 
 Simple cross platform rust wallpaper changer.
 This app allows you to jump between several wallpapers at different hours.
-In the `/wallpapers` you can find the Lakeside collection which particularly fits the application purpose.
+In the `/wallpapers/` you can find the Lakeside collection which particularly fits the application purpose.
 
 In the most common use case, the murpapier app seeks for the files and hours in the config file (`config.toml`).
 The murpapier has also an auto mode which automatically set an hour for each file in the wallapers directory.
+
+## Launch the app
+```
+cargo build --release
+export CONFIG_MURPAPIER=path/to/config.toml
+export WALLPAPER_DIR=/path/to/wallpapers/dir
+cargo run [verbose|auto]
+```
 
 
 ## Dependencies
