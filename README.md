@@ -1,6 +1,6 @@
 # murpapier
 
-Simple cross platform rust wallpaper changer.
+Simple cross platform rust **wallpaper changer**.  
 This app allows you to jump between several wallpapers at different hours.
 In the `/wallpapers/` you can find the Lakeside collection which particularly fits the application purpose.
 
