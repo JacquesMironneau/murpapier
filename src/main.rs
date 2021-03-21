@@ -126,7 +126,7 @@ fn main() {
             }
             index = (index + 1) % vec.len();
         } else {
-            println!("Nothing change, next one is: {}", vec[index].path);
+            println!("Nothing change, next one is: {} at {}:{}", vec[index].path, vec[index].hour, vec[index].min);
         }
         
     }

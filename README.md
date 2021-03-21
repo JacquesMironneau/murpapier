@@ -33,3 +33,6 @@ path="my_cool_wallpaper.png"
 hour=10
 min=0
 ```
+## Todo:
+
+- [ ] Handle computer sleeps while the daemon is running
